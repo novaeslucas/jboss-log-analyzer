@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Analisador de logs do JBoss EAP 6.4 — Visualize, filtre e pesquise logs por categoria.">
+  <title>JBoss Log Analyzer — EAP 6.4</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="logo">
+      <div class="logo-icon">📋</div>
+      <h1>JBoss Log Analyzer <span>EAP 6.4</span></h1>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- Upload Zone -->
+    <div id="upload-zone" class="upload-zone">
+      <div class="upload-icon">📂</div>
+      <p>Arraste o arquivo <strong>.log</strong> aqui ou clique para selecionar</p>
+      <p style="font-size: 0.8rem; margin-top: 0.5rem;">Suporta arquivos de log do JBoss EAP 6.4</p>
+      <input type="file" id="file-input" accept=".log,.txt">
+      <div id="file-name" class="file-name hidden"></div>
+    </div>
+
+    <!-- Dashboard (hidden until file loaded) -->
+    <div id="dashboard" class="hidden">
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card all active" data-filter="all">
+          <div class="stat-icon">📊</div>
+          <div class="stat-info">
+            <div class="stat-count" id="count-all">0</div>
+            <div class="stat-label">Total</div>
+          </div>
+        </div>
+        <div class="stat-card info" data-filter="info">
+          <div class="stat-icon">ℹ️</div>
+          <div class="stat-info">
+            <div class="stat-count" id="count-info">0</div>
+            <div class="stat-label">Info</div>
+          </div>
+        </div>
+        <div class="stat-card warn" data-filter="warn">
+          <div class="stat-icon">⚠️</div>
+          <div class="stat-info">
+            <div class="stat-count" id="count-warn">0</div>
+            <div class="stat-label">Warning</div>
+          </div>
+        </div>
+        <div class="stat-card error" data-filter="error">
+          <div class="stat-icon">🔴</div>
+          <div class="stat-info">
+            <div class="stat-count" id="count-error">0</div>
+            <div class="stat-label">Error</div>
+          </div>
+        </div>
+        <div class="stat-card other" data-filter="other">
+          <div class="stat-icon">📝</div>
+          <div class="stat-info">
+            <div class="stat-count" id="count-other">0</div>
+            <div class="stat-label">Outros</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Timeline Chart -->
+      <div id="chart-container" class="chart-container">
+        <div class="chart-header">
+          <h2 class="chart-title">📈 Timeline de Logs</h2>
+          <div id="chart-legend" class="chart-legend hidden">
+            <span class="legend-item active" data-level="INFO"><span class="legend-dot dot-info"></span>Info</span>
+            <span class="legend-item active" data-level="WARN"><span class="legend-dot dot-warn"></span>Warn</span>
+            <span class="legend-item active" data-level="ERROR"><span class="legend-dot dot-error"></span>Error</span>
+            <span class="legend-item active" data-level="OTHER"><span class="legend-dot dot-other"></span>Outros</span>
+          </div>
+        </div>
+        <!-- Placeholder: shown before chart is loaded -->
+        <div id="chart-placeholder" class="chart-placeholder">
+          <div class="chart-placeholder-icon">📊</div>
+          <p>O gráfico de timeline pode demorar para carregar em arquivos grandes.</p>
+          <button id="load-chart-btn" class="load-chart-btn">Carregar Gráfico</button>
+        </div>
+        <!-- Loading spinner -->
+        <div id="chart-loading" class="chart-loading hidden">
+          <div class="chart-spinner"></div>
+          <p>Gerando gráfico de timeline...</p>
+        </div>
+        <!-- Chart canvas: hidden until loaded -->
+        <div id="chart-canvas-wrap" class="chart-canvas-wrap hidden">
+          <canvas id="timeline-canvas"></canvas>
+        </div>
+        <div id="chart-tooltip" class="chart-tooltip hidden"></div>
+      </div>
+
+      <!-- Anomaly Detection Panel -->
+      <div id="anomaly-panel" class="anomaly-panel hidden collapsed">
+        <div class="anomaly-header" id="anomaly-toggle">
+          <div class="anomaly-header-left">
+            <h2 class="anomaly-title">🚨 Anomalias Detectadas <span id="anomaly-count" class="anomaly-badge">0</span></h2>
+            <p class="anomaly-subtitle">Desvios estatísticos detectados automaticamente via Z-Score</p>
+          </div>
+          <span class="anomaly-chevron">▶</span>
+        </div>
+        <div id="anomaly-list" class="anomaly-list"></div>
+      </div>
+
+      <!-- Heatmaps Row -->
+      <div class="heatmaps-row">
+
+        <!-- Error Heatmap -->
+        <div id="heatmap-container" class="heatmap-container hidden">
+          <div class="heatmap-header">
+            <h2 class="heatmap-title">🔥 Erros</h2>
+            <div class="heatmap-header-right">
+              <button class="anomaly-toggle-btn" data-level="ERROR" title="Ativar/desativar indicadores de anomalia">⚡</button>
+              <div class="heatmap-legend">
+                <span class="heatmap-legend-label">Menos</span>
+                <span class="heatmap-legend-cell heat-0"></span>
+                <span class="heatmap-legend-cell heat-1"></span>
+                <span class="heatmap-legend-cell heat-2"></span>
+                <span class="heatmap-legend-cell heat-3"></span>
+                <span class="heatmap-legend-cell heat-4"></span>
+                <span class="heatmap-legend-label">Mais</span>
+              </div>
+            </div>
+          </div>
+          <div id="heatmap-grid" class="heatmap-grid"></div>
+          <div id="heatmap-tooltip" class="chart-tooltip hidden"></div>
+        </div>
+
+        <!-- Info Heatmap -->
+        <div id="heatmap-info-container" class="heatmap-container hidden">
+          <div class="heatmap-header">
+            <h2 class="heatmap-title">ℹ️ Info</h2>
+            <div class="heatmap-header-right">
+              <button class="anomaly-toggle-btn" data-level="INFO" title="Ativar/desativar indicadores de anomalia">⚡</button>
+              <div class="heatmap-legend">
+                <span class="heatmap-legend-label">Menos</span>
+                <span class="heatmap-legend-cell heat-info-0"></span>
+                <span class="heatmap-legend-cell heat-info-1"></span>
+                <span class="heatmap-legend-cell heat-info-2"></span>
+                <span class="heatmap-legend-cell heat-info-3"></span>
+                <span class="heatmap-legend-cell heat-info-4"></span>
+                <span class="heatmap-legend-label">Mais</span>
+              </div>
+            </div>
+          </div>
+          <div id="heatmap-info-grid" class="heatmap-grid"></div>
+          <div id="heatmap-info-tooltip" class="chart-tooltip hidden"></div>
+        </div>
+
+        <!-- Warn Heatmap -->
+        <div id="heatmap-warn-container" class="heatmap-container hidden">
+          <div class="heatmap-header">
+            <h2 class="heatmap-title">⚠️ Warning</h2>
+            <div class="heatmap-header-right">
+              <button class="anomaly-toggle-btn" data-level="WARN" title="Ativar/desativar indicadores de anomalia">⚡</button>
+              <div class="heatmap-legend">
+                <span class="heatmap-legend-label">Menos</span>
+                <span class="heatmap-legend-cell heat-warn-0"></span>
+                <span class="heatmap-legend-cell heat-warn-1"></span>
+                <span class="heatmap-legend-cell heat-warn-2"></span>
+                <span class="heatmap-legend-cell heat-warn-3"></span>
+                <span class="heatmap-legend-cell heat-warn-4"></span>
+                <span class="heatmap-legend-label">Mais</span>
+              </div>
+            </div>
+          </div>
+          <div id="heatmap-warn-grid" class="heatmap-grid"></div>
+          <div id="heatmap-warn-tooltip" class="chart-tooltip hidden"></div>
+        </div>
+
+      </div><!-- /heatmaps-row -->
+
+      <div class="toolbar">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-input" placeholder="Pesquisar logs... (texto, código, módulo)">
+        </div>
+        <div class="search-box exclude-box">
+          <span class="search-icon">🚫</span>
+          <input type="text" id="exclude-input" placeholder="Excluir palavra-chave...">
+        </div>
+        <div class="time-range">
+          <span class="time-label">⏰</span>
+          <input type="time" id="time-from" title="Horário inicial">
+          <span class="time-separator">até</span>
+          <input type="time" id="time-to" title="Horário final">
+        </div>
+        <div class="log-count" id="log-count">0 entradas</div>
+      </div>
+
+      <!-- Log Table -->
+      <div id="log-table-wrap" class="log-table-wrap hidden">
+        <table class="log-table">
+          <thead>
+            <tr>
+              <th class="col-line">#</th>
+              <th class="col-time">Hora</th>
+              <th class="col-level">Nível</th>
+              <th class="col-source">Origem</th>
+              <th class="col-preview">Mensagem</th>
+              <th class="col-expand"></th>
+            </tr>
+          </thead>
+          <tbody id="log-body"></tbody>
+        </table>
+      </div>
+
+      <!-- Empty state -->
+      <div id="empty-state" class="empty-state">
+        <div class="empty-icon">🔎</div>
+        <p>Nenhum log encontrado para o filtro selecionado.</p>
+      </div>
+
+    </div><!-- /dashboard -->
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
