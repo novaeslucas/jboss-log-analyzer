@@ -13,7 +13,7 @@
 
 ---
 
-![log_analyzer](.\log_analyzer.png)
+![log_analyzer](log_analyzer.png)
 
 ---
 
