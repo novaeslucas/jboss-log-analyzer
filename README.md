@@ -62,7 +62,6 @@ log_analyzer/
 ├── index.html          # Página principal (dashboard, upload, tabela, heatmaps)
 ├── app.js              # Motor principal (parser, filtros, charts, anomalias)
 ├── styles.css          # Design system (dark mode, componentes, animações)
-└── jboss_server.log    # Arquivo de exemplo para testes
 ```
 
 ### 🔧 Requisitos
@@ -117,7 +116,6 @@ log_analyzer/
 ├── index.html          # Main page (dashboard, upload, table, heatmaps)
 ├── app.js              # Core engine (parser, filters, charts, anomaly detection)
 ├── styles.css          # Design system (dark mode, components, animations)
-└── jboss_server.log    # Sample log file for testing
 ```
 
 ### 🔧 Requirements
@@ -129,4 +127,4 @@ log_analyzer/
 
 ## 📄 License
 
-MIT
+Apache 2.0
