@@ -13,6 +13,10 @@
 
 ---
 
+![log_analyzer](.\log_analyzer.png)
+
+---
+
 ## 🇧🇷 Português
 
 ### Sobre
@@ -21,26 +25,26 @@ Ferramenta web para análise visual de arquivos de log do **JBoss EAP 6.4**. Fun
 
 ### ✨ Funcionalidades
 
-| Recurso | Descrição |
-|---|---|
-| **📂 Drag & Drop** | Arraste arquivos `.log` ou `.txt` diretamente na interface |
-| **📊 Dashboard** | Cards com contagem por nível: Info, Warning, Error, Outros |
-| **🔍 Busca e Exclusão** | Pesquise por texto/código/módulo e exclua palavras-chave |
-| **⏰ Filtro por Período** | Filtre por intervalo de horário (HH:MM) |
-| **📈 Timeline** | Gráfico de barras empilhadas por minuto (lazy load) |
-| **🔥 Heatmaps** | Estilo GitHub — mapas de calor por hora para Errors, Info e Warnings |
-| **🚨 Detecção de Anomalias** | Motor estatístico com Z-Score detecta Spikes, Concentrações, Rajadas e Silêncios |
-| **📥 Exportação JSON** | Clique em qualquer célula do heatmap para exportar dados daquela hora em JSON (pronto para análise com IA) |
-| **🔎 Detalhes Expansíveis** | Clique em qualquer entrada da tabela para ver a mensagem completa e stacktrace |
+| Recurso                      | Descrição                                                                                                  |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| **📂 Drag & Drop**           | Arraste arquivos `.log` ou `.txt` diretamente na interface                                                 |
+| **📊 Dashboard**             | Cards com contagem por nível: Info, Warning, Error, Outros                                                 |
+| **🔍 Busca e Exclusão**      | Pesquise por texto/código/módulo e exclua palavras-chave                                                   |
+| **⏰ Filtro por Período**     | Filtre por intervalo de horário (HH:MM)                                                                    |
+| **📈 Timeline**              | Gráfico de barras empilhadas por minuto (lazy load)                                                        |
+| **🔥 Heatmaps**              | Estilo GitHub — mapas de calor por hora para Errors, Info e Warnings                                       |
+| **🚨 Detecção de Anomalias** | Motor estatístico com Z-Score detecta Spikes, Concentrações, Rajadas e Silêncios                           |
+| **📥 Exportação JSON**       | Clique em qualquer célula do heatmap para exportar dados daquela hora em JSON (pronto para análise com IA) |
+| **🔎 Detalhes Expansíveis**  | Clique em qualquer entrada da tabela para ver a mensagem completa e stacktrace                             |
 
 ### 🚨 Tipos de Anomalia Detectados
 
-| Tipo | O que detecta |
-|---|---|
-| **SPIKE** | Hora com contagem significativamente acima da média (Z-Score > 2) |
+| Tipo              | O que detecta                                                          |
+| ----------------- | ---------------------------------------------------------------------- |
+| **SPIKE**         | Hora com contagem significativamente acima da média (Z-Score > 2)      |
 | **CONCENTRATION** | Mais de 70% dos registros de uma hora vindos de um único módulo/source |
-| **BURST** | Um minuto específico com 5x ou mais registros que seus vizinhos |
-| **SILENCE** | Hora sem nenhum log entre horas ativas (possível crash ou reinício) |
+| **BURST**         | Um minuto específico com 5x ou mais registros que seus vizinhos        |
+| **SILENCE**       | Hora sem nenhum log entre horas ativas (possível crash ou reinício)    |
 
 ### 🚀 Como Usar
 
@@ -76,26 +80,26 @@ A web-based tool for visually analyzing **JBoss EAP 6.4** log files. Runs entire
 
 ### ✨ Features
 
-| Feature | Description |
-|---|---|
-| **📂 Drag & Drop** | Drag `.log` or `.txt` files directly into the UI |
-| **📊 Dashboard** | Stat cards with counts per level: Info, Warning, Error, Others |
-| **🔍 Search & Exclude** | Search by text/code/module and exclude keywords |
-| **⏰ Time Range Filter** | Filter by time range (HH:MM) |
-| **📈 Timeline** | Stacked bar chart per minute bucket (lazy loaded) |
-| **🔥 Heatmaps** | GitHub-style hourly heatmaps for Errors, Info, and Warnings |
-| **🚨 Anomaly Detection** | Statistical engine using Z-Score detects Spikes, Concentrations, Bursts, and Silences |
-| **📥 JSON Export** | Click any heatmap cell to export that hour's data as JSON (AI-analysis ready) |
-| **🔎 Expandable Details** | Click any table row to expand the full message and stacktrace |
+| Feature                   | Description                                                                           |
+| ------------------------- | ------------------------------------------------------------------------------------- |
+| **📂 Drag & Drop**        | Drag `.log` or `.txt` files directly into the UI                                      |
+| **📊 Dashboard**          | Stat cards with counts per level: Info, Warning, Error, Others                        |
+| **🔍 Search & Exclude**   | Search by text/code/module and exclude keywords                                       |
+| **⏰ Time Range Filter**   | Filter by time range (HH:MM)                                                          |
+| **📈 Timeline**           | Stacked bar chart per minute bucket (lazy loaded)                                     |
+| **🔥 Heatmaps**           | GitHub-style hourly heatmaps for Errors, Info, and Warnings                           |
+| **🚨 Anomaly Detection**  | Statistical engine using Z-Score detects Spikes, Concentrations, Bursts, and Silences |
+| **📥 JSON Export**        | Click any heatmap cell to export that hour's data as JSON (AI-analysis ready)         |
+| **🔎 Expandable Details** | Click any table row to expand the full message and stacktrace                         |
 
 ### 🚨 Anomaly Types Detected
 
-| Type | What it detects |
-|---|---|
-| **SPIKE** | Hour with count significantly above average (Z-Score > 2) |
-| **CONCENTRATION** | Over 70% of an hour's entries coming from a single source/module |
-| **BURST** | A specific minute with 5x or more entries than its neighbors |
-| **SILENCE** | An hour with zero logs between active hours (possible crash or restart) |
+| Type              | What it detects                                                         |
+| ----------------- | ----------------------------------------------------------------------- |
+| **SPIKE**         | Hour with count significantly above average (Z-Score > 2)               |
+| **CONCENTRATION** | Over 70% of an hour's entries coming from a single source/module        |
+| **BURST**         | A specific minute with 5x or more entries than its neighbors            |
+| **SILENCE**       | An hour with zero logs between active hours (possible crash or restart) |
 
 ### 🚀 How to Use
 
@@ -126,4 +130,3 @@ log_analyzer/
 ## 📄 License
 
 MIT
-
