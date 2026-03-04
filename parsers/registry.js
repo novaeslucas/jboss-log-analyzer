@@ -5,7 +5,8 @@
 //   1. Create parsers/<name>.js exporting a parse(rawText) function
 //   2. Import it here and add an entry below with available: true
 
-import { parseJBossLog } from './jboss.js';
+import { parseJBossLog }  from './jboss.js';
+import { parseSpringLog } from './spring.js';
 
 export const PARSERS = {
   jboss: {
@@ -16,9 +17,9 @@ export const PARSERS = {
   },
   springboot: {
     name: 'Spring Boot',
-    hint: 'Suporta logs do Spring Boot (Logback / Log4j2)',
-    available: false,
-    parse: null
+    hint: 'Suporta logs do Spring Boot com Tomcat (Logback / Log4j2)',
+    available: true,
+    parse: parseSpringLog
   },
   wildfly: {
     name: 'WildFly',
