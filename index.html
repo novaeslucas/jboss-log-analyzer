@@ -182,11 +182,15 @@
       <div class="toolbar">
         <div class="search-box">
           <span class="search-icon">🔍</span>
-          <input type="text" id="search-input" placeholder="Pesquisar logs... (texto, código, módulo)">
+          <div class="tag-input-wrap" id="search-tag-wrap">
+            <input type="text" id="search-input" placeholder="Pesquisar logs... (Enter para adicionar)">
+          </div>
         </div>
         <div class="search-box exclude-box">
           <span class="search-icon">🚫</span>
-          <input type="text" id="exclude-input" placeholder="Excluir palavra-chave...">
+          <div class="tag-input-wrap" id="exclude-tag-wrap">
+            <input type="text" id="exclude-input" placeholder="Excluir palavra-chave... (Enter para adicionar)">
+          </div>
         </div>
         <div class="time-range">
           <span class="time-label">⏰</span>

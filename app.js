@@ -7,8 +7,8 @@ const App = (() => {
   let allEntries = [];
   let filteredEntries = [];
   let activeFilter = 'all';
-  let searchQuery = '';
-  let excludeQuery = '';
+  let searchKeywords = [];
+  let excludeKeywords = [];
   let timeFrom = '';
   let timeTo = '';
   let chartLoaded = false;
@@ -33,6 +33,8 @@ const App = (() => {
     dom.dashboard = document.getElementById('dashboard');
     dom.searchInput = document.getElementById('search-input');
     dom.excludeInput = document.getElementById('exclude-input');
+    dom.searchTagWrap = document.getElementById('search-tag-wrap');
+    dom.excludeTagWrap = document.getElementById('exclude-tag-wrap');
     dom.timeFrom = document.getElementById('time-from');
     dom.timeTo = document.getElementById('time-to');
     dom.logCount = document.getElementById('log-count');
@@ -148,14 +150,17 @@ const App = (() => {
 
     filteredEntries = allEntries.filter(entry => {
       const matchesFilter = activeFilter === 'all' || entry.level === activeFilter.toUpperCase();
-      const matchesSearch = !searchQuery ||
-        entry.message.toLowerCase().includes(searchQuery) ||
-        entry.source.toLowerCase().includes(searchQuery) ||
-        entry.thread.toLowerCase().includes(searchQuery) ||
-        entry.timestamp.includes(searchQuery) ||
-        entry.raw.toLowerCase().includes(searchQuery);
-      const notExcluded = !excludeQuery ||
-        !entry.raw.toLowerCase().includes(excludeQuery);
+      const rawLower = entry.raw.toLowerCase();
+      const matchesSearch = searchKeywords.length === 0 ||
+        searchKeywords.some(kw =>
+          entry.message.toLowerCase().includes(kw) ||
+          entry.source.toLowerCase().includes(kw) ||
+          entry.thread.toLowerCase().includes(kw) ||
+          entry.timestamp.includes(kw) ||
+          rawLower.includes(kw)
+        );
+      const notExcluded = excludeKeywords.length === 0 ||
+        !excludeKeywords.some(kw => rawLower.includes(kw));
 
       let matchesTime = true;
       if ((fromSec !== null || toSec !== null) && entry.timestamp) {
@@ -293,8 +298,8 @@ const App = (() => {
     const detailTr = document.createElement('tr');
     detailTr.className = 'detail-row';
 
-    const messageHtml = searchQuery
-      ? highlightText(escapeHtml(entry.message), searchQuery)
+    const messageHtml = searchKeywords.length > 0
+      ? highlightText(escapeHtml(entry.message), searchKeywords)
       : escapeHtml(entry.message);
 
     detailTr.innerHTML = `
@@ -329,14 +334,49 @@ const App = (() => {
     return div.innerHTML;
   }
 
-  function highlightText(html, query) {
-    if (!query) return html;
-    const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
-    return html.replace(regex, '<mark>$1</mark>');
+  function highlightText(html, keywords) {
+    if (!keywords || keywords.length === 0) return html;
+    keywords.forEach(kw => {
+      if (!kw) return;
+      const regex = new RegExp(`(${escapeRegex(kw)})`, 'gi');
+      html = html.replace(regex, '<mark>$1</mark>');
+    });
+    return html;
   }
 
   function escapeRegex(str) {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  function renderTagChips(keywords, wrapEl, inputEl, isExclude) {
+    wrapEl.querySelectorAll('.tag-chip').forEach(c => c.remove());
+
+    keywords.forEach((kw, i) => {
+      const chip = document.createElement('span');
+      chip.className = 'tag-chip';
+
+      const text = document.createTextNode(kw);
+      chip.appendChild(text);
+
+      const btn = document.createElement('button');
+      btn.className = 'tag-remove';
+      btn.setAttribute('type', 'button');
+      btn.textContent = '×';
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        keywords.splice(i, 1);
+        renderTagChips(keywords, wrapEl, inputEl, isExclude);
+        applyFilters();
+      });
+      chip.appendChild(btn);
+
+      wrapEl.insertBefore(chip, inputEl);
+    });
+
+    const defaultPlaceholder = isExclude
+      ? 'Excluir palavra-chave... (Enter para adicionar)'
+      : 'Pesquisar logs... (Enter para adicionar)';
+    inputEl.placeholder = keywords.length > 0 ? 'Adicionar...' : defaultPlaceholder;
   }
 
   function shortenSource(source) {
@@ -359,8 +399,12 @@ const App = (() => {
       const text = e.target.result;
       allEntries = parseLogFile(text);
       activeFilter = 'error';
-      searchQuery = '';
+      searchKeywords = [];
+      excludeKeywords = [];
       dom.searchInput.value = '';
+      dom.excludeInput.value = '';
+      renderTagChips(searchKeywords, dom.searchTagWrap, dom.searchInput, false);
+      renderTagChips(excludeKeywords, dom.excludeTagWrap, dom.excludeInput, true);
 
       // Reset chart state for new file
       chartLoaded = false;
@@ -430,25 +474,43 @@ const App = (() => {
       });
     });
 
-    // Search
-    let searchTimeout;
-    dom.searchInput.addEventListener('input', (e) => {
-      clearTimeout(searchTimeout);
-      searchTimeout = setTimeout(() => {
-        searchQuery = e.target.value.toLowerCase().trim();
+    // Search tag input
+    dom.searchInput.addEventListener('keydown', (e) => {
+      if ((e.key === 'Enter' || e.key === ',') && dom.searchInput.value.trim()) {
+        e.preventDefault();
+        const val = dom.searchInput.value.replace(/,\s*$/, '').trim().toLowerCase();
+        if (val && !searchKeywords.includes(val)) {
+          searchKeywords.push(val);
+          renderTagChips(searchKeywords, dom.searchTagWrap, dom.searchInput, false);
+          applyFilters();
+        }
+        dom.searchInput.value = '';
+      } else if (e.key === 'Backspace' && !dom.searchInput.value && searchKeywords.length > 0) {
+        searchKeywords.pop();
+        renderTagChips(searchKeywords, dom.searchTagWrap, dom.searchInput, false);
         applyFilters();
-      }, 250);
+      }
     });
+    dom.searchTagWrap.addEventListener('click', () => dom.searchInput.focus());
 
-    // Exclude keyword
-    let excludeTimeout;
-    dom.excludeInput.addEventListener('input', (e) => {
-      clearTimeout(excludeTimeout);
-      excludeTimeout = setTimeout(() => {
-        excludeQuery = e.target.value.toLowerCase().trim();
+    // Exclude tag input
+    dom.excludeInput.addEventListener('keydown', (e) => {
+      if ((e.key === 'Enter' || e.key === ',') && dom.excludeInput.value.trim()) {
+        e.preventDefault();
+        const val = dom.excludeInput.value.replace(/,\s*$/, '').trim().toLowerCase();
+        if (val && !excludeKeywords.includes(val)) {
+          excludeKeywords.push(val);
+          renderTagChips(excludeKeywords, dom.excludeTagWrap, dom.excludeInput, true);
+          applyFilters();
+        }
+        dom.excludeInput.value = '';
+      } else if (e.key === 'Backspace' && !dom.excludeInput.value && excludeKeywords.length > 0) {
+        excludeKeywords.pop();
+        renderTagChips(excludeKeywords, dom.excludeTagWrap, dom.excludeInput, true);
         applyFilters();
-      }, 250);
+      }
     });
+    dom.excludeTagWrap.addEventListener('click', () => dom.excludeInput.focus());
 
     // Time range
     dom.timeFrom.addEventListener('change', (e) => {

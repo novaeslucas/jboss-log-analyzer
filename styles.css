@@ -819,38 +819,93 @@ body {
 .search-box .search-icon {
   position: absolute;
   left: 14px;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 11px;
   color: var(--text-muted);
   font-size: 0.9rem;
   pointer-events: none;
+  z-index: 1;
 }
 
-.search-box input {
+.tag-input-wrap {
   width: 100%;
-  padding: 0.7rem 1rem 0.7rem 2.5rem;
+  padding: 0.35rem 0.75rem 0.35rem 2.5rem;
   background: var(--bg-input);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  color: var(--text-primary);
-  font-size: 0.9rem;
-  font-family: inherit;
-  outline: none;
-  transition: all 0.2s ease;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  min-height: 40px;
+  cursor: text;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.search-box input::placeholder {
-  color: var(--text-muted);
-}
-
-.search-box input:focus {
+.tag-input-wrap:focus-within {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
 }
 
-.exclude-box input:focus {
+.exclude-box .tag-input-wrap:focus-within {
   border-color: var(--error-text);
   box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.12);
+}
+
+.tag-input-wrap input {
+  flex: 1;
+  min-width: 120px;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-family: inherit;
+  padding: 0.2rem 0;
+}
+
+.tag-input-wrap input::placeholder {
+  color: var(--text-muted);
+}
+
+/* Tag chips */
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 6px 2px 8px;
+  border-radius: 4px;
+  font-size: 0.76rem;
+  font-family: 'JetBrains Mono', monospace;
+  white-space: nowrap;
+  background: rgba(99, 102, 241, 0.15);
+  color: var(--accent-hover);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  line-height: 1.4;
+}
+
+.exclude-box .tag-chip {
+  background: rgba(248, 113, 113, 0.12);
+  color: var(--error-text);
+  border: 1px solid rgba(248, 113, 113, 0.25);
+}
+
+.tag-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  font-size: 0.9rem;
+  line-height: 1;
+  padding: 0 1px;
+  opacity: 0.55;
+  transition: opacity 0.15s ease;
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+}
+
+.tag-remove:hover {
+  opacity: 1;
 }
 
 .log-count {
