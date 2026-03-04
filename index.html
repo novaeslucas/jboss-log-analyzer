@@ -17,17 +17,60 @@
   <header class="app-header">
     <div class="logo">
       <div class="logo-icon">📋</div>
-      <h1>JBoss Log Analyzer <span>EAP 6.4</span></h1>
+      <h1>Log Analyzer</h1>
     </div>
   </header>
 
   <main class="container">
 
+    <!-- Log Type Selector -->
+    <div class="log-type-selector">
+      <span class="log-type-label">Processador de log</span>
+      <div class="log-type-options">
+
+        <button class="log-type-card active" data-parser="jboss">
+          <div class="log-type-icon">📋</div>
+          <div class="log-type-info">
+            <div class="log-type-name">JBoss EAP 6.4</div>
+            <div class="log-type-desc">server.log padrão</div>
+          </div>
+        </button>
+
+        <button class="log-type-card" data-parser="springboot" disabled>
+          <div class="log-type-icon">🌱</div>
+          <div class="log-type-info">
+            <div class="log-type-name">Spring Boot</div>
+            <div class="log-type-desc">Logback / Log4j2</div>
+          </div>
+          <span class="log-type-soon">Em breve</span>
+        </button>
+
+        <button class="log-type-card" data-parser="wildfly" disabled>
+          <div class="log-type-icon">🔥</div>
+          <div class="log-type-info">
+            <div class="log-type-name">WildFly</div>
+            <div class="log-type-desc">EAP 7 / WildFly 26+</div>
+          </div>
+          <span class="log-type-soon">Em breve</span>
+        </button>
+
+        <button class="log-type-card" data-parser="tomcat" disabled>
+          <div class="log-type-icon">🐱</div>
+          <div class="log-type-info">
+            <div class="log-type-name">Tomcat</div>
+            <div class="log-type-desc">catalina.out</div>
+          </div>
+          <span class="log-type-soon">Em breve</span>
+        </button>
+
+      </div>
+    </div>
+
     <!-- Upload Zone -->
     <div id="upload-zone" class="upload-zone">
       <div class="upload-icon">📂</div>
       <p>Arraste o arquivo <strong>.log</strong> aqui ou clique para selecionar</p>
-      <p style="font-size: 0.8rem; margin-top: 0.5rem;">Suporta arquivos de log do JBoss EAP 6.4</p>
+      <p id="upload-hint" style="font-size: 0.8rem; margin-top: 0.5rem;">Suporta arquivos de log do JBoss EAP 6.4</p>
       <input type="file" id="file-input" accept=".log,.txt">
       <div id="file-name" class="file-name hidden"></div>
     </div>
@@ -202,6 +245,7 @@
           <span class="time-separator">até</span>
           <input type="time" id="time-to" title="Horário final">
         </div>
+        <button id="clear-filters-btn" class="clear-filters-btn hidden" title="Limpar todos os filtros">✕ Limpar filtros</button>
         <div class="log-count" id="log-count">0 entradas</div>
       </div>
 
@@ -232,6 +276,6 @@
 
   </main>
 
-  <script src="app.js"></script>
+  <script type="module" src="app.js"></script>
 </body>
 </html>
