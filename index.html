@@ -68,11 +68,29 @@
 
     <!-- Upload Zone -->
     <div id="upload-zone" class="upload-zone">
-      <div class="upload-icon">📂</div>
-      <p>Arraste o arquivo <strong>.log</strong> aqui ou clique para selecionar</p>
-      <p id="upload-hint" style="font-size: 0.8rem; margin-top: 0.5rem;">Suporta arquivos de log do JBoss EAP 6.4</p>
+
+      <div class="upload-icon-wrap">
+        <svg class="upload-svg" width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 15V4M12 4L8.5 7.5M12 4L15.5 7.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M4 17.5V19C4 19.5523 4.44772 20 5 20H19C19.5523 20 20 19.5523 20 19V17.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <div class="upload-text-group">
+        <p class="upload-title">Arraste um arquivo <strong>.log</strong> aqui</p>
+        <p class="upload-sub">ou <span class="upload-link">clique para selecionar</span></p>
+      </div>
+
+      <div class="upload-meta">
+        <span class="upload-badge">.log</span>
+        <span class="upload-badge">.txt</span>
+        <span class="upload-sep">·</span>
+        <span id="upload-hint" class="upload-hint-text">JBoss EAP 6.4</span>
+      </div>
+
       <input type="file" id="file-input" accept=".log,.txt">
       <div id="file-name" class="file-name hidden"></div>
+
     </div>
 
     <!-- Dashboard (hidden until file loaded) -->
