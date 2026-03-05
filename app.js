@@ -260,11 +260,36 @@ function toggleDetail(row, entry) {
   detailTr.innerHTML = `
     <td colspan="6">
       <div class="detail-content">
-        <div class="detail-header">Mensagem</div>
-        <pre class="detail-message">${messageHtml}</pre>
+        <div class="detail-codeblock">
+          <div class="detail-codeblock-header">
+            <span class="detail-codeblock-label">Mensagem</span>
+            <button class="detail-copy-btn" data-action="copy" title="Copiar mensagem">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            </button>
+          </div>
+          <pre class="detail-message">${messageHtml}</pre>
+        </div>
       </div>
     </td>
   `;
+
+  const COPY_SVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+  const CHECK_SVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+
+  detailTr.querySelector('[data-action="copy"]').addEventListener('click', (e) => {
+    e.stopPropagation();
+    const btn = e.currentTarget;
+    navigator.clipboard.writeText(entry.message).then(() => {
+      btn.classList.add('copied');
+      btn.innerHTML = CHECK_SVG;
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        btn.innerHTML = COPY_SVG;
+      }, 2000);
+    }).catch(() => {
+      btn.innerHTML = COPY_SVG;
+    });
+  });
 
   row.classList.add('row-expanded');
   row.after(detailTr);

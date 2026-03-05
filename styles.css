@@ -1356,13 +1356,49 @@ body {
   padding: 1rem 1.25rem;
 }
 
-.detail-header {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+/* Unified code-block container */
+.detail-codeblock {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.detail-codeblock-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+}
+
+.detail-codeblock-label {
+  font-size: 0.8rem;
+  font-weight: 500;
   color: var(--text-muted);
-  font-weight: 600;
-  margin-bottom: 0.5rem;
+}
+
+.detail-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.detail-copy-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.detail-copy-btn.copied {
+  color: #22c55e;
 }
 
 .detail-message {
@@ -1374,11 +1410,11 @@ body {
   overflow-x: auto;
   margin: 0;
   background: var(--bg-primary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
   padding: 0.75rem 1rem;
   max-height: 350px;
   overflow-y: auto;
+  border: none;
+  border-radius: 0;
 }
 
 /* Level badges */
